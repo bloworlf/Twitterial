@@ -1,17 +1,19 @@
-package com.codepath.apps.restclienttemplate;
+package com.codepath.apps.restclienttemplate.activities;
 
-import android.annotation.SuppressLint;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
+import android.widget.Toast;
 
+import com.codepath.apps.restclienttemplate.R;
+import com.codepath.apps.restclienttemplate.TwitterApp;
+import com.codepath.apps.restclienttemplate.TwitterClient;
 import com.codepath.apps.restclienttemplate.models.SampleModel;
 import com.codepath.apps.restclienttemplate.models.SampleModelDao;
 import com.codepath.oauth.OAuthLoginActionBarActivity;
-import com.codepath.oauth.OAuthLoginActivity;
 
-public class LoginActivity extends OAuthLoginActionBarActivity<RestClient> {
+public class LoginActivity extends OAuthLoginActionBarActivity<TwitterClient> {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -21,14 +23,14 @@ public class LoginActivity extends OAuthLoginActionBarActivity<RestClient> {
 		final SampleModel sampleModel = new SampleModel();
 		sampleModel.setName("CodePath");
 
-		final SampleModelDao sampleModelDao = ((RestApplication) getApplicationContext()).getMyDatabase().sampleModelDao();
+		final SampleModelDao sampleModelDao = ((TwitterApp) getApplicationContext()).getMyDatabase().sampleModelDao();
 
 		AsyncTask<SampleModel, Void, Void> task = new AsyncTask<SampleModel, Void, Void>() {
 			@Override
 			protected Void doInBackground(SampleModel... sampleModels) {
 				sampleModelDao.insertModel(sampleModels);
 				return null;
-			};
+			}
 		};
 		task.execute(sampleModel);
 	}
@@ -45,6 +47,7 @@ public class LoginActivity extends OAuthLoginActionBarActivity<RestClient> {
 	// i.e Display application "homepage"
 	@Override
 	public void onLoginSuccess() {
+		Toast.makeText(this, "Login Successful", Toast.LENGTH_SHORT).show();
 		// Intent i = new Intent(this, PhotosActivity.class);
 		// startActivity(i);
 	}
