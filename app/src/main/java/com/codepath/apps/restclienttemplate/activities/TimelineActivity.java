@@ -1,6 +1,7 @@
 package com.codepath.apps.restclienttemplate.activities;
 
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,6 +12,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.Toast;
 
 import com.codepath.apps.restclienttemplate.R;
 import com.codepath.apps.restclienttemplate.TwitterApp;
@@ -33,22 +37,31 @@ public class TimelineActivity extends AppCompatActivity {
     Toolbar toolbar;
 
     TwitterClient twitterClient;
-    TweetAdapter tweetAdapter;
-    ArrayList<Tweet> tweets;
-    RecyclerView recyclerView;
+    public static TweetAdapter tweetAdapter;
+    public static ArrayList<Tweet> tweets;
+    public static RecyclerView recyclerView;
     LinearLayoutManager linearLayoutManager;
     SwipeRefreshLayout swipeRefreshLayout;
     private MenuItem composeAction;
+    private FloatingActionButton floatingActionButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
 
+        floatingActionButton = findViewById(R.id.fabButton);
+
         toolbar = findViewById(R.id.timeline_toolbar);
         setSupportActionBar(toolbar);
         this.getSupportActionBar().setDisplayShowTitleEnabled(false);
         this.getSupportActionBar().setIcon(R.drawable.twitter_48x48);
+        toolbar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                recyclerView.smoothScrollToPosition(0);
+            }
+        });
 
         twitterClient = TwitterApp.getTwitterClient(this);
         linearLayoutManager = new LinearLayoutManager(this);
@@ -76,13 +89,18 @@ public class TimelineActivity extends AppCompatActivity {
                     loadMore(tweets.get(tweets.size()-1).id);
                 }
                 else if(!recyclerView.canScrollVertically(-1)){
-                    //loadRecent(tweets.get(0).id);
+                    loadRecent(tweets.get(0).id);
+                    //toolbar.setBackgroundColor(getResources().getColor(R.color.colorAccent));
+                    //toolbar.setSubtitle("New tweets loaded");
                 }
             }
+        });
 
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-
+            public void onClick(View view) {
+                Compose compose = Compose.newInstance();
+                compose.show(getSupportFragmentManager(), "ComposeFragment");
             }
         });
 

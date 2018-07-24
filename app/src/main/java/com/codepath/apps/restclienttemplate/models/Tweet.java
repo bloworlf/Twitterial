@@ -3,7 +3,9 @@ package com.codepath.apps.restclienttemplate.models;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Tweet {
+import java.io.Serializable;
+
+public class Tweet implements Serializable{
     /*
     {
         "coordinates": {
@@ -127,7 +129,12 @@ public class Tweet {
     public String text;
     public long id;
     public String created_at;
+    public boolean retweeted;
+    public long retweet_count;
+    public boolean favorited;
+    public long favorites_count;
     public User user;
+    public Media media;
 
     public static Tweet fromJSON(JSONObject jsonObject){
         Tweet tweet = new Tweet();
@@ -136,7 +143,18 @@ public class Tweet {
             tweet.text = jsonObject.getString("text");
             tweet.id = jsonObject.getLong("id");
             tweet.created_at = jsonObject.getString("created_at");
+            tweet.retweeted = jsonObject.getBoolean("retweeted");
+            tweet.retweet_count = jsonObject.getLong("retweet_count");
+            tweet.favorited = jsonObject.getBoolean("favorited");
+            tweet.favorites_count = jsonObject.getLong("favorite_count");
             tweet.user = User.fromJSON(jsonObject.getJSONObject("user"));
+            if (jsonObject.has("extended_entities")){
+                tweet.media = Media.fromJSON(jsonObject.getJSONObject("extended_entities").getJSONArray("media").getJSONObject(0));
+            }
+            else {
+                tweet.media = null;
+            }
+
         }
         catch (JSONException e){
             e.printStackTrace();

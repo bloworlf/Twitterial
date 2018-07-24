@@ -4,7 +4,7 @@
 
     <item
         android:id="@+id/action_compose"
-        android:icon="@android:drawable/ic_menu_add"
+        android:icon="@drawable/ic_compose"
         android:orderInCategory="2"
         android:title="Compose Tweet"
         app:showAsAction="always" />
