@@ -26,9 +26,14 @@ import android.widget.VideoView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.codepath.apps.restclienttemplate.R;
+import com.codepath.apps.restclienttemplate.TwitterApp;
+import com.codepath.apps.restclienttemplate.TwitterClient;
 import com.codepath.apps.restclienttemplate.activities.TweetDetails;
 import com.codepath.apps.restclienttemplate.models.Media;
 import com.codepath.apps.restclienttemplate.models.Tweet;
+import com.loopj.android.http.JsonHttpResponseHandler;
+
+import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.text.ParseException;
@@ -36,6 +41,7 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 
+import cz.msebera.android.httpclient.Header;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
@@ -43,6 +49,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder>{
 
     private Context context;
     private List<Tweet> tweets;
+    private TwitterClient twitterClient;
 
     public TweetAdapter(Context context, List<Tweet> tweets){
         this.context = context;
@@ -56,6 +63,8 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder>{
 
         LayoutInflater layoutInflater = LayoutInflater.from(context);
         View tweetView = layoutInflater.inflate(R.layout.tweet, viewGroup, false);
+
+        twitterClient = TwitterApp.getTwitterClient(context);
 
         ViewHolder viewHolder = new ViewHolder(tweetView);
         return viewHolder;
@@ -166,6 +175,91 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder>{
             viewHolder.tweet_play_video.setVisibility(View.GONE);
         }
 
+        viewHolder.tweet_retweeted.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (tweet.retweeted){
+                    unRetweet(tweet.id);
+                }
+                else {
+                    reTweet(tweet.id);
+                }
+
+            }
+        });
+
+        viewHolder.tweet_favorited.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(tweet.favorited){
+                    unlikeTweet(tweet.id);
+                }
+                else {
+                    likeTweet(tweet.id);
+                }
+            }
+        });
+
+    }
+
+    private void likeTweet(long id) {
+        twitterClient.likeTweet(new JsonHttpResponseHandler(){
+                                    @Override
+                                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                                        Toast.makeText(context, "You\'ve liked.", Toast.LENGTH_SHORT).show();
+                                    }
+
+                                    @Override
+                                    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                                        Toast.makeText(context, "Oops! Didn't like", Toast.LENGTH_SHORT).show();
+                                    }
+                                },
+                id);
+    }
+
+    private void unlikeTweet(long id){
+        twitterClient.unlikeTweet(new JsonHttpResponseHandler(){
+                                      @Override
+                                      public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                                          Toast.makeText(context, "You\'ve unliked.", Toast.LENGTH_SHORT).show();
+                                      }
+
+                                      @Override
+                                      public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                                          Toast.makeText(context, "Oops! Didn't unlike", Toast.LENGTH_SHORT).show();
+                                      }
+                                  },
+                id);
+    }
+
+    private void unRetweet(long id) {
+        twitterClient.unRetweet(new JsonHttpResponseHandler(){
+                                  @Override
+                                  public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                                      Toast.makeText(context, "You\'ve unretweeted.", Toast.LENGTH_SHORT).show();
+                                  }
+
+                                  @Override
+                                  public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                                      Toast.makeText(context, "Oops! Didn't unretweet", Toast.LENGTH_SHORT).show();
+                                  }
+                              },
+                id);
+    }
+
+    private void reTweet(long id) {
+        twitterClient.reTweet(new JsonHttpResponseHandler(){
+                                  @Override
+                                  public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                                      Toast.makeText(context, "You\'ve retweeted.", Toast.LENGTH_SHORT).show();
+                                  }
+
+                                  @Override
+                                  public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                                      Toast.makeText(context, "Oops! Didn't retweet", Toast.LENGTH_SHORT).show();
+                                  }
+                              },
+                id);
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
