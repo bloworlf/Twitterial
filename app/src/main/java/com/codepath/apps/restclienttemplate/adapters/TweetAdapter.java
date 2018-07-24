@@ -1,6 +1,8 @@
 package com.codepath.apps.restclienttemplate.adapters;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.media.MediaPlayer;
@@ -28,6 +30,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.codepath.apps.restclienttemplate.R;
 import com.codepath.apps.restclienttemplate.TwitterApp;
 import com.codepath.apps.restclienttemplate.TwitterClient;
+import com.codepath.apps.restclienttemplate.activities.TimelineActivity;
 import com.codepath.apps.restclienttemplate.activities.TweetDetails;
 import com.codepath.apps.restclienttemplate.models.Media;
 import com.codepath.apps.restclienttemplate.models.Tweet;
@@ -50,6 +53,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder>{
     private Context context;
     private List<Tweet> tweets;
     private TwitterClient twitterClient;
+    boolean deleted;
 
     public TweetAdapter(Context context, List<Tweet> tweets){
         this.context = context;
@@ -71,7 +75,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder>{
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final ViewHolder viewHolder, int position) {
+    public void onBindViewHolder(@NonNull final ViewHolder viewHolder, final int position) {
         final Tweet tweet = tweets.get(position);
 
         viewHolder.tweet_linearLayout.setOnClickListener(new View.OnClickListener() {
@@ -79,8 +83,16 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder>{
             public void onClick(View view) {
                 Intent intent = new Intent(context, TweetDetails.class);
                 //intent.putExtra("id", String.valueOf(tweet.id));
-                intent.putExtra("tweet", (Serializable)tweet);
+                intent.putExtra("tweet", tweet);
                 context.startActivity(intent);
+            }
+        });
+        viewHolder.tweet_linearLayout.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                showDialog(tweet, position);
+
+                return true;
             }
         });
 
@@ -200,6 +212,44 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder>{
             }
         });
 
+    }
+
+    private void showDialog(final Tweet tweet, final int position) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Deleting a status");
+        builder.setMessage("Are you sure you want to delete it?");
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                if(deleteTweet(tweet.id)){
+                    TimelineActivity.tweets.remove(position);
+                    TimelineActivity.tweetAdapter.notifyItemRemoved(position);
+                }
+            }
+        });
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                //
+            }
+        });
+        builder.show();
+    }
+
+    private boolean deleteTweet(long id) {
+        twitterClient.deleteTweet(new JsonHttpResponseHandler(){
+                                      @Override
+                                      public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                                          deleted = true;
+                                      }
+
+                                      @Override
+                                      public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                                          deleted = false;
+                                      }
+                                  },
+                id);
+        return deleted;
     }
 
     private void likeTweet(long id) {

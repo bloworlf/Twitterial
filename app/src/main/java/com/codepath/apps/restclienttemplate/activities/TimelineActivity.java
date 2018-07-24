@@ -88,11 +88,11 @@ public class TimelineActivity extends AppCompatActivity {
                 if (!recyclerView.canScrollVertically(1)) {
                     loadMore(tweets.get(tweets.size()-1).id);
                 }
-                else if(!recyclerView.canScrollVertically(-1)){
-                    loadRecent(tweets.get(0).id);
+                //else if(!recyclerView.canScrollVertically(-1)){
+                    //loadRecent(tweets.get(0).id);
                     //toolbar.setBackgroundColor(getResources().getColor(R.color.colorAccent));
                     //toolbar.setSubtitle("New tweets loaded");
-                }
+                //}
             }
         });
 

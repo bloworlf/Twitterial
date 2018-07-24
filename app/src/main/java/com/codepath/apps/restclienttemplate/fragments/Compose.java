@@ -112,7 +112,7 @@ public class Compose extends DialogFragment {
                 Tweet tweet = Tweet.fromJSON(response);
                 TimelineActivity.tweets.add(tweet);
                 TimelineActivity.tweetAdapter.notifyItemInserted(0);
-                //TimelineActivity.recyclerView.smoothScrollToPosition(0);
+                TimelineActivity.recyclerView.smoothScrollToPosition(0);
             }
 
             @Override

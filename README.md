@@ -2,7 +2,7 @@
 
 **Twitterial** is an android app that allows a user to view his Twitter timeline and post a new tweet. The app utilizes [Twitter REST API](https://developer.twitter.com/en/docs/api-reference-index).
 
-Time spent: **X** hours spent in total
+Time spent: **52** hours spent in total
 
 ## User Stories
 
@@ -51,9 +51,7 @@ The following **additional** features are implemented:
 
 Here's a walkthrough of implemented user stories:
 
-<img src='http://i.imgur.com/link/to/your/gif/file.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
-
-GIF created with [LiceCap](http://www.cockos.com/licecap/).
+[Link to video](https://www.dropbox.com/s/aw4sqqrvotpjcmi/week_3.mp4?dl=0)
 
 ## Notes
 
