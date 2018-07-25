@@ -110,9 +110,9 @@ public class Compose extends DialogFragment {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 Tweet tweet = Tweet.fromJSON(response);
-                TimelineActivity.tweets.add(tweet);
-                TimelineActivity.tweetAdapter.notifyItemInserted(0);
-                TimelineActivity.recyclerView.smoothScrollToPosition(0);
+                Timeline.tweets.add(tweet);
+                Timeline.tweetAdapter.notifyItemInserted(0);
+                Timeline.recyclerView.smoothScrollToPosition(0);
             }
 
             @Override

@@ -27,8 +27,8 @@ public class ScrollingFABBehavior extends FloatingActionButton.Behavior {
             CoordinatorLayout.LayoutParams lp = (CoordinatorLayout.LayoutParams) fab.getLayoutParams();
             int fabBottomMargin = lp.bottomMargin;
             int distanceToScroll = fab.getHeight() + fabBottomMargin;
-            float ratio = dependency.getY()/(float)toolbarHeight;
-            fab.setTranslationY(-distanceToScroll * ratio);
+            float ratio = dependency.getY();///(float)toolbarHeight;
+            fab.setTranslationY(distanceToScroll * ratio);
         }
         return returnValue;
     }

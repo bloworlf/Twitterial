@@ -1,110 +1,55 @@
 package com.codepath.apps.restclienttemplate.activities;
 
-import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.widget.SwipeRefreshLayout;
+import android.graphics.Color;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Toast;
 
 import com.codepath.apps.restclienttemplate.R;
-import com.codepath.apps.restclienttemplate.TwitterApp;
-import com.codepath.apps.restclienttemplate.TwitterClient;
-import com.codepath.apps.restclienttemplate.adapters.TweetAdapter;
+import com.codepath.apps.restclienttemplate.adapters.ViewPagerAdapter;
 import com.codepath.apps.restclienttemplate.fragments.Compose;
-import com.codepath.apps.restclienttemplate.models.Tweet;
-import com.loopj.android.http.JsonHttpResponseHandler;
+import com.codepath.apps.restclienttemplate.fragments.Mentions;
+import com.codepath.apps.restclienttemplate.fragments.Timeline;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-
-import cz.msebera.android.httpclient.Header;
+import java.util.List;
 
 public class TimelineActivity extends AppCompatActivity {
 
     Toolbar toolbar;
 
-    TwitterClient twitterClient;
-    public static TweetAdapter tweetAdapter;
-    public static ArrayList<Tweet> tweets;
-    public static RecyclerView recyclerView;
-    LinearLayoutManager linearLayoutManager;
-    SwipeRefreshLayout swipeRefreshLayout;
     private MenuItem composeAction;
-    private FloatingActionButton floatingActionButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
 
-        floatingActionButton = findViewById(R.id.fabButton);
-
-        toolbar = findViewById(R.id.timeline_toolbar);
+        toolbar = findViewById(R.id.main_timeline_toolbar);
         setSupportActionBar(toolbar);
         this.getSupportActionBar().setDisplayShowTitleEnabled(false);
         this.getSupportActionBar().setIcon(R.drawable.twitter_48x48);
+        toolbar.setBackgroundColor(Color.WHITE);
         toolbar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                recyclerView.smoothScrollToPosition(0);
+                Timeline.recyclerView.smoothScrollToPosition(0);
             }
         });
 
-        twitterClient = TwitterApp.getTwitterClient(this);
-        linearLayoutManager = new LinearLayoutManager(this);
+        ViewPager viewPager = findViewById(R.id.main_viewpager);
+        setupViewPager(viewPager);
 
-        swipeRefreshLayout = findViewById(R.id.timeline_refresh);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                loadTimeline();
-            }
-        });
-        recyclerView = findViewById(R.id.tweet_recyclerView);
-        tweets = new ArrayList<>();
-
-        tweetAdapter = new TweetAdapter(this, tweets);
-
-        recyclerView.setLayoutManager(linearLayoutManager);
-        recyclerView.setAdapter(tweetAdapter);
-
-        recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-                if (!recyclerView.canScrollVertically(1)) {
-                    loadMore(tweets.get(tweets.size()-1).id);
-                }
-                //else if(!recyclerView.canScrollVertically(-1)){
-                    //loadRecent(tweets.get(0).id);
-                    //toolbar.setBackgroundColor(getResources().getColor(R.color.colorAccent));
-                    //toolbar.setSubtitle("New tweets loaded");
-                //}
-            }
-        });
-
-        floatingActionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Compose compose = Compose.newInstance();
-                compose.show(getSupportFragmentManager(), "ComposeFragment");
-            }
-        });
-
-        loadTimeline();
+        TabLayout tabLayout = findViewById(R.id.main_tabs);
+        //tabLayout.setSelectedTabIndicatorColor(Color.parseColor("#FFFFFF"));
+        tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.colorAccent));
+        tabLayout.setupWithViewPager(viewPager);
 
     }
 
@@ -127,92 +72,25 @@ public class TimelineActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void loadRecent(long id) {
-        twitterClient.loadRecentTweets(new JsonHttpResponseHandler(){
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                for (int i=0;i<response.length();i++){
-                    try {
-                        Tweet tweet = Tweet.fromJSON(response.getJSONObject(i));
-                        tweets.add(tweet);
-                        tweetAdapter.notifyItemInserted(0);
-                    }
-                    catch (JSONException e){
-                        e.printStackTrace();
-                    }
-                }
-                swipeRefreshLayout.setRefreshing(false);
-            }
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
-                Log.e("FAILURE", errorResponse.toString());
-            }
-
-        },
-        id);
+    private void setupViewPager(ViewPager viewPager) {
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+        adapter.addFragment(new Timeline(), "Timeline");
+        adapter.addFragment(new Mentions(), "Mentions");
+        viewPager.setAdapter(adapter);
     }
 
-    private void loadMore(long id) {
-        twitterClient.loadMoreTweets(new JsonHttpResponseHandler(){
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                for (int i=0;i<response.length();i++){
-                    try {
-                        Tweet tweet = Tweet.fromJSON(response.getJSONObject(i));
-                        tweets.add(tweet);
-                        if (tweets.size() > 0){
-                            tweetAdapter.notifyItemInserted(tweets.size() - 1);
-                        }
-                        else {
-                            tweetAdapter.notifyItemInserted(0);
-                        }
+    private Fragment getFocusedFragment(){
+        Fragment fragment = null;
 
-                    }
-                    catch (JSONException e){
-                        e.printStackTrace();
-                    }
-                }
+        List<Fragment> fragments = getSupportFragmentManager().getFragments();
+        for(Fragment fragment1 : fragments){
+            if(fragment1.isAdded() &&
+                    fragment1.isVisible() &&
+                    fragment1.getUserVisibleHint()){
+                fragment = fragment1;
             }
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
-             Log.e("FAILURE", errorResponse.toString());
-            }
-        },
-        id);
+        }
 
-    }
-
-    private void loadTimeline(){
-        tweets.clear();
-        tweetAdapter.notifyDataSetChanged();
-        twitterClient.getHomeTimeline(new JsonHttpResponseHandler(){
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                //super.onSuccess(statusCode, headers, response);
-
-                for (int i=0;i<response.length();i++){
-                    try {
-                        Tweet tweet = Tweet.fromJSON(response.getJSONObject(i));
-                        tweets.add(tweet);
-                        tweetAdapter.notifyItemInserted(tweets.size() - 1);
-                    }
-                    catch (JSONException e){
-                        e.printStackTrace();
-                    }
-                }
-                swipeRefreshLayout.setRefreshing(false);
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
-                swipeRefreshLayout.setRefreshing(false);
-                Log.e("FAILURE", errorResponse.toString());
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                Log.e("FAILURE", errorResponse.toString());
-            }
-        });
+        return fragment;
     }
 }

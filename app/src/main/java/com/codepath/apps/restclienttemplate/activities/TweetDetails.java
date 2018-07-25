@@ -52,7 +52,8 @@ public class TweetDetails extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(getApplicationContext(), TimelineActivity.class));
+                //startActivity(new Intent(getApplicationContext(), TimelineActivity.class));
+                onBackPressed();
                 finish();
             }
         });

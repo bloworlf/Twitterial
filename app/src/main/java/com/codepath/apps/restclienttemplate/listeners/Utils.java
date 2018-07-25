@@ -2,6 +2,7 @@ package com.codepath.apps.restclienttemplate.listeners;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.support.design.widget.AppBarLayout;
 
 import com.codepath.apps.restclienttemplate.R;
 
@@ -16,9 +17,11 @@ public class Utils {
         return toolbarHeight;
     }
 
+
     /*
     public static int getTabsHeight(Context context) {
         return (int) context.getResources().getDimension(R.dimen.tabsHeight);
     }
     */
+
 }

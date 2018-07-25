@@ -32,6 +32,7 @@ import com.codepath.apps.restclienttemplate.TwitterApp;
 import com.codepath.apps.restclienttemplate.TwitterClient;
 import com.codepath.apps.restclienttemplate.activities.TimelineActivity;
 import com.codepath.apps.restclienttemplate.activities.TweetDetails;
+import com.codepath.apps.restclienttemplate.fragments.Timeline;
 import com.codepath.apps.restclienttemplate.models.Media;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -163,10 +164,6 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder>{
                 viewHolder.tweet_image.setVisibility(View.GONE);
                 viewHolder.tweet_play_video.setVisibility(View.VISIBLE);
 
-                Log.d("VIDEO1", tweet.media.media_url);
-                Log.d("VIDEO2", tweet.media.display_url);
-                Log.d("VIDEO3", tweet.media.expanded_url);
-
                 RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) viewHolder.tweet_image.getLayoutParams();
                 layoutParams.height = tweet.media.height/2;
                 viewHolder.tweet_video.setLayoutParams(layoutParams);
@@ -196,6 +193,8 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder>{
                 else {
                     reTweet(tweet.id);
                 }
+                updateTweetView(tweet.id, position);
+                Timeline.tweetAdapter.notifyItemChanged(position);
 
             }
         });
@@ -209,9 +208,28 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder>{
                 else {
                     likeTweet(tweet.id);
                 }
+                updateTweetView(tweet.id, position);
+                Timeline.tweetAdapter.notifyItemChanged(position);
             }
         });
 
+    }
+
+    private void updateTweetView(long id, final int position) {
+        twitterClient.getTweetDetail(new JsonHttpResponseHandler(){
+                                         @Override
+                                         public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                                             Tweet tweet = Tweet.fromJSON(response);
+                                             tweets.set(position, tweet);
+                                             //Timeline.tweetAdapter.notifyItemChanged(position);
+                                         }
+
+                                         @Override
+                                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                                             //Timeline.tweetAdapter.notifyItemChanged(position);
+                                         }
+                                     },
+                id);
     }
 
     private void showDialog(final Tweet tweet, final int position) {
@@ -222,8 +240,8 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder>{
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 if(deleteTweet(tweet.id)){
-                    TimelineActivity.tweets.remove(position);
-                    TimelineActivity.tweetAdapter.notifyItemRemoved(position);
+                    Timeline.tweets.remove(position);
+                    Timeline.tweetAdapter.notifyItemRemoved(position);
                 }
             }
         });

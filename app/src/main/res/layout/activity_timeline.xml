@@ -9,37 +9,26 @@
     android:background="@color/background">
 
     <android.support.design.widget.AppBarLayout
-        android:id="@+id/timeline_appBarLayout"
+        android:id="@+id/main_appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <include
-            android:id="@+id/timeline_toolbar"
+            android:id="@+id/main_timeline_toolbar"
             layout="@layout/toolbar"/>
-
+        <android.support.design.widget.TabLayout
+            android:id="@+id/main_tabs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#ffffff"
+            app:tabMode="fixed"
+            app:tabGravity="fill"/>
     </android.support.design.widget.AppBarLayout>
 
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/timeline_refresh"
+    <android.support.v4.view.ViewPager
+        android:id="@+id/main_viewpager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        tools:ignore="PrivateResource">
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/tweet_recyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </android.support.v4.widget.SwipeRefreshLayout>
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fabButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end|bottom"
-        android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/ic_compose"
-        android:backgroundTint="@color/colorAccent"
-        android:tint="@color/tint"
-        app:borderWidth="0dp"
-        app:layout_behavior="com.codepath.apps.restclienttemplate.listeners.ScrollingFABBehavior"/>
+        tools:ignore="PrivateResource" />
 
 </android.support.design.widget.CoordinatorLayout>
