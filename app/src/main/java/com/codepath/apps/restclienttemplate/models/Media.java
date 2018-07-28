@@ -2,10 +2,12 @@ package com.codepath.apps.restclienttemplate.models;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.parceler.Parcel;
 
 import java.io.Serializable;
 
-public class Media implements Serializable {
+@Parcel
+public class Media {
     /*
     {
         "created_at": "Mon Jul 11 21:50:25 +0000 2016",
@@ -152,7 +154,7 @@ public class Media implements Serializable {
                 "friends_count": 3898,
                 "listed_count": 781,
                 "created_at": "Wed Feb 21 15:14:48 +0000 2007",
-                "favourites_count": 65599,
+                "friends_count": 65599,
                 "utc_offset": 3600,
                 "time_zone": "London",
                 "geo_enabled": true,
@@ -202,17 +204,27 @@ public class Media implements Serializable {
     public String expanded_url;
     public int width;
     public int height;
+    public  long id;
+    public String url;
+
+    public Media(){
+
+    }
 
     public static Media fromJSON(JSONObject jsonObject){
         Media media = new Media();
 
         try {
+            media.id = jsonObject.getLong("id");
             media.type = jsonObject.getString("type");
             media.media_url = jsonObject.getString("media_url");
             media.display_url = jsonObject.getString("display_url");
             media.expanded_url = jsonObject.getString("expanded_url");
             media.width = jsonObject.getJSONObject("sizes").getJSONObject("medium").getInt("w");
             media.height = jsonObject.getJSONObject("sizes").getJSONObject("medium").getInt("h");
+            if (jsonObject.has("video_info")){
+                media.url = jsonObject.getJSONObject("video_info").getJSONArray("variants").getJSONObject(0).getString("url");
+            }
         }
         catch (JSONException e){
             e.printStackTrace();

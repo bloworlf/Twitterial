@@ -19,6 +19,8 @@ import com.codepath.apps.restclienttemplate.R;
 import com.codepath.apps.restclienttemplate.adapters.TweetAdapter;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 
+import org.parceler.Parcels;
+
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
@@ -40,7 +42,7 @@ public class TweetDetails extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tweet_details);
 
-        tweet = (Tweet) getIntent().getSerializableExtra("tweet");
+        tweet = Parcels.unwrap(getIntent().getParcelableExtra("tweet"));
 
         toolbar = findViewById(R.id.detail_toolbar);
         setSupportActionBar(toolbar);

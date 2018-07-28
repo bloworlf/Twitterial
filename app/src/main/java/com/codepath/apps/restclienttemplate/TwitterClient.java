@@ -1,6 +1,7 @@
 package com.codepath.apps.restclienttemplate;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 
 import com.codepath.oauth.OAuthBaseClient;
 import com.github.scribejava.apis.FlickrApi;
@@ -9,6 +10,8 @@ import com.github.scribejava.core.builder.api.BaseApi;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+
+import org.json.JSONObject;
 
 /*
  * 
@@ -86,6 +89,11 @@ public class TwitterClient extends OAuthBaseClient {
 		client.get(apiUrl, handler);
 	}
 
+	public void getUserTimeline(JsonHttpResponseHandler handler){
+		String apiUrl = getApiUrl("statuses/user_timeline.json");
+		client.get(apiUrl, handler);
+	}
+
 	public void getTweetDetail(AsyncHttpResponseHandler handler, long id){
 		String apiUrl = getApiUrl("statuses/show.json");
 		RequestParams params = new RequestParams();
@@ -133,6 +141,44 @@ public class TwitterClient extends OAuthBaseClient {
 		RequestParams params = new RequestParams();
 		params.put("count", "25");
 		params.put("max_id", id - 1);
+		client.get(apiUrl, params, handler);
+	}
+
+	public void loadUserTweet(AsyncHttpResponseHandler handler, long uid){
+		String apiUrl = getApiUrl("statuses/user_timeline.json");
+		RequestParams params = new RequestParams();
+		params.put("user_id", uid);
+		client.get(apiUrl, params, handler);
+	}
+
+	public void loadMoreUserTweet(AsyncHttpResponseHandler handler, long uid, long id){
+		String apiUrl = getApiUrl("statuses/user_timeline.json");
+		RequestParams params = new RequestParams();
+		params.put("max_id", id - 1);
+		params.put("user_id", uid);
+		client.get(apiUrl, params, handler);
+	}
+
+	public void getFriendshipStatus(AsyncHttpResponseHandler handler, long sourceID, long targetID){
+		String apiUrl = getApiUrl("friendships/show.json");
+		RequestParams params = new RequestParams();
+		params.put("source_id", sourceID);
+		params.put("target_id", targetID);
+		client.get(apiUrl, params, handler);
+	}
+
+	public void loadUserFavorites(AsyncHttpResponseHandler handler, long uid){
+		String apiUrl = getApiUrl("favorites/list.json");
+		RequestParams params = new RequestParams();
+		params.put("user_id", uid);
+		client.get(apiUrl, params, handler);
+	}
+
+	public void loadMoreUserFavorites(AsyncHttpResponseHandler handler, long uid, long id){
+		String apiUrl = getApiUrl("favorites/list.json");
+		RequestParams params = new RequestParams();
+		params.put("max_id", id - 1);
+		params.put("user_id", uid);
 		client.get(apiUrl, params, handler);
 	}
 

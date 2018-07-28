@@ -68,7 +68,7 @@
                 android:text="Tweet text" />
 
             <RelativeLayout
-                android:layout_gravity="start"
+                android:layout_gravity="center"
                 android:id="@+id/image_video_relativeLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -87,13 +87,15 @@
                     android:id="@+id/tweet_image"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/image_video_bg"/>
+                    android:background="@drawable/image_video_bg"
+                    android:layout_centerInParent="true"/>
                 <VideoView
                     android:visibility="gone"
                     android:id="@+id/tweet_video"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/image_video_bg"/>
+                    android:background="@drawable/image_video_bg"
+                    android:layout_centerInParent="true"/>
 
             </RelativeLayout>
         </LinearLayout>

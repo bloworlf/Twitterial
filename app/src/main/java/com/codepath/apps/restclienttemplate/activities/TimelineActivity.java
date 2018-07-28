@@ -1,5 +1,6 @@
 package com.codepath.apps.restclienttemplate.activities;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -13,18 +14,30 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.codepath.apps.restclienttemplate.R;
+import com.codepath.apps.restclienttemplate.TwitterApp;
+import com.codepath.apps.restclienttemplate.TwitterClient;
 import com.codepath.apps.restclienttemplate.adapters.ViewPagerAdapter;
 import com.codepath.apps.restclienttemplate.fragments.Compose;
 import com.codepath.apps.restclienttemplate.fragments.Mentions;
 import com.codepath.apps.restclienttemplate.fragments.Timeline;
+import com.codepath.apps.restclienttemplate.models.User;
+import com.loopj.android.http.JsonHttpResponseHandler;
+
+import org.json.JSONObject;
+import org.parceler.Parcels;
 
 import java.util.List;
+
+import cz.msebera.android.httpclient.Header;
 
 public class TimelineActivity extends AppCompatActivity {
 
     Toolbar toolbar;
 
-    private MenuItem composeAction;
+    TwitterClient twitterClient;
+    User self = new User();
+
+    private MenuItem composeAction, userAction;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +56,9 @@ public class TimelineActivity extends AppCompatActivity {
             }
         });
 
+        twitterClient = TwitterApp.getTwitterClient(this);
+        getCurrentUser();
+
         ViewPager viewPager = findViewById(R.id.main_viewpager);
         setupViewPager(viewPager);
 
@@ -56,8 +72,9 @@ public class TimelineActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.tweet_timeline, menu);
+        inflater.inflate(R.menu.main_timeline, menu);
         composeAction = menu.findItem(R.id.action_compose);
+        userAction = menu.findItem(R.id.action_user);
         return true;
     }
 
@@ -68,8 +85,22 @@ public class TimelineActivity extends AppCompatActivity {
                 Compose compose = Compose.newInstance();
                 compose.show(getSupportFragmentManager(), "ComposeFragment");
                 return true;
+            case R.id.action_user:
+                //Intent intent = new Intent(this, ViewSelf.class);
+                Intent intent = new Intent(this, ViewUser.class);
+                intent.putExtra("user", Parcels.wrap(self));
+                startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void getCurrentUser() {
+        twitterClient.getCurrentUser(new JsonHttpResponseHandler(){
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                self = User.fromJSON(response);
+            }
+        });
     }
 
     private void setupViewPager(ViewPager viewPager) {

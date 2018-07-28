@@ -32,12 +32,16 @@ import com.codepath.apps.restclienttemplate.TwitterApp;
 import com.codepath.apps.restclienttemplate.TwitterClient;
 import com.codepath.apps.restclienttemplate.activities.TimelineActivity;
 import com.codepath.apps.restclienttemplate.activities.TweetDetails;
+import com.codepath.apps.restclienttemplate.activities.ViewUser;
 import com.codepath.apps.restclienttemplate.fragments.Timeline;
 import com.codepath.apps.restclienttemplate.models.Media;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
+import org.parceler.Parcels;
 
 import java.io.Serializable;
 import java.text.ParseException;
@@ -55,6 +59,8 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder>{
     private List<Tweet> tweets;
     private TwitterClient twitterClient;
     boolean deleted;
+
+    public  ViewHolder viewHolder;
 
     public TweetAdapter(Context context, List<Tweet> tweets){
         this.context = context;
@@ -77,6 +83,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder>{
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder viewHolder, final int position) {
+        this.viewHolder = viewHolder;
         final Tweet tweet = tweets.get(position);
 
         viewHolder.tweet_linearLayout.setOnClickListener(new View.OnClickListener() {
@@ -84,7 +91,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder>{
             public void onClick(View view) {
                 Intent intent = new Intent(context, TweetDetails.class);
                 //intent.putExtra("id", String.valueOf(tweet.id));
-                intent.putExtra("tweet", tweet);
+                intent.putExtra("tweet", Parcels.wrap(tweet));
                 context.startActivity(intent);
             }
         });
@@ -107,14 +114,14 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder>{
         else {
             viewHolder.tweet_favorited.setImageResource(R.drawable.ic_like_empty);
         }
-        viewHolder.tweet_favorite_count.setText(String.valueOf(tweet.favorites_count));
+        viewHolder.tweet_favorite_count.setText(withSuffix(tweet.favorites_count));
         if (tweet.retweeted){
             viewHolder.tweet_retweeted.setImageResource(R.drawable.ic_retweet_fill);
         }
         else {
             viewHolder.tweet_retweeted.setImageResource(R.drawable.ic_retweet_empty);
         }
-        viewHolder.tweet_retweet_count.setText(String.valueOf(tweet.retweet_count));
+        viewHolder.tweet_retweet_count.setText(withSuffix(tweet.retweet_count));
         Linkify.addLinks(viewHolder.tweet_text, Linkify.ALL);
         Glide.with(context)
                 .load(Uri.parse(tweet.user.profile_image_url))
@@ -163,18 +170,19 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder>{
                 viewHolder.tweet_video.setVisibility(View.VISIBLE);
                 viewHolder.tweet_image.setVisibility(View.GONE);
                 viewHolder.tweet_play_video.setVisibility(View.VISIBLE);
+                viewHolder.tweet_play_video.bringToFront();
 
                 RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) viewHolder.tweet_image.getLayoutParams();
-                layoutParams.height = tweet.media.height/2;
+                layoutParams.height = tweet.media.height;
                 viewHolder.tweet_video.setLayoutParams(layoutParams);
 
-                viewHolder.tweet_video.setVideoURI(Uri.parse(tweet.media.expanded_url));
-                viewHolder.tweet_video.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                    @Override
-                    public void onPrepared(MediaPlayer mediaPlayer) {
-                        viewHolder.tweet_video.start();
-                    }
-                });
+                viewHolder.tweet_video.setVideoURI(Uri.parse(tweet.media.url));
+                //viewHolder.tweet_video.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                //    @Override
+                //    public void onPrepared(MediaPlayer mediaPlayer) {
+                //        viewHolder.tweet_video.start();
+                //    }
+                //});
 
             }
         }
@@ -210,6 +218,23 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder>{
                 }
                 updateTweetView(tweet.id, position);
                 Timeline.tweetAdapter.notifyItemChanged(position);
+            }
+        });
+
+        viewHolder.user_profile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(context, ViewUser.class);
+                intent.putExtra("user", Parcels.wrap(tweet.user));
+                context.startActivity(intent);
+            }
+        });
+        viewHolder.user_name.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(context, ViewUser.class);
+                intent.putExtra("user", Parcels.wrap(tweet.user));
+                context.startActivity(intent);
             }
         });
 
@@ -360,19 +385,6 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder>{
             tweet_play_video = view.findViewById(R.id.tweet_play_video);
 
             //relativeLayout = view.findViewById(R.id.image_video_relativeLayout);
-
-            user_profile.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Log.d("ONCLICKLISTENER", "PROFILE");
-                }
-            });
-            user_name.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Log.d("ONCLICKLISTENER", "USERNAME");
-                }
-            });
         }
     }
 
@@ -396,6 +408,14 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder>{
         }
 
         return relativeDate;
+    }
+
+    public static String withSuffix(long count) {
+        if (count < 1000) return "" + count;
+        int exp = (int) (Math.log(count) / Math.log(1000));
+        return String.format("%.1f %c",
+                count / Math.pow(1000, exp),
+                "kMGTPE".charAt(exp-1));
     }
 
     /*

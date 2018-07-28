@@ -1,33 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".activities.TimelineActivity">
+    tools:context=".activities.ViewUser">
 
     <android.support.design.widget.AppBarLayout
-        android:id="@+id/main_appBarLayout"
+        android:id="@+id/view_self_appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <include
-            android:id="@+id/main_timeline_toolbar"
-            layout="@layout/toolbar"/>
-        <android.support.design.widget.TabLayout
-            android:id="@+id/main_tabs"
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/user_profile_toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#ffffff"
+            app:layout_scrollFlags="scroll|enterAlways"
+            app:contentInsetStartWithNavigation="0dp"
+            app:contentInsetStart="0dp">
+
+            <include
+                layout="@layout/view_user_toolbar"/>
+
+        </android.support.v7.widget.Toolbar>
+        <android.support.design.widget.TabLayout
+            android:id="@+id/view_user_tabs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             app:tabMode="fixed"
             app:tabGravity="fill"/>
     </android.support.design.widget.AppBarLayout>
 
     <android.support.v4.view.ViewPager
-        android:id="@+id/main_viewpager"
+        android:id="@+id/view_user_viewpager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        tools:ignore="PrivateResource" />
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
 </android.support.design.widget.CoordinatorLayout>

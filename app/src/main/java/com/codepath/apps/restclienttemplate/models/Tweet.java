@@ -2,10 +2,12 @@ package com.codepath.apps.restclienttemplate.models;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.parceler.Parcel;
 
 import java.io.Serializable;
 
-public class Tweet implements Serializable{
+@Parcel
+public class Tweet{
     /*
     {
         "coordinates": {
@@ -94,7 +96,7 @@ public class Tweet implements Serializable{
         },
         "default_profile": false,
                 "contributors_enabled": false,
-                "favourites_count": 11,
+                "friends_count": 11,
                 "url": "http://about.me/michaelangelo",
                 "profile_image_url_https": "https://si0.twimg.com/profile_images/1305509670/chatMikeTwitter_normal.png",
                 "utc_offset": 28800,
@@ -135,6 +137,10 @@ public class Tweet implements Serializable{
     public long favorites_count;
     public User user;
     public Media media;
+
+    public Tweet(){
+
+    }
 
     public static Tweet fromJSON(JSONObject jsonObject){
         Tweet tweet = new Tweet();

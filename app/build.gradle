@@ -45,6 +45,7 @@ dependencies {
     //implementation 'com.facebook.stetho:stetho:1.5.0'
     implementation 'com.android.support:recyclerview-v7:28.0.0-alpha3'
     implementation 'com.android.support:design:28.0.0-alpha3'
-    // Links, hashtags in text
-    //implementation 'org.bluecabin.textoo:textoo:1.0.1'
+    // Parceler library
+    implementation 'org.parceler:parceler-api:1.1.11'
+    annotationProcessor 'org.parceler:parceler:1.1.11'
 }

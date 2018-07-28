@@ -5,8 +5,14 @@
     <item
         android:id="@+id/action_compose"
         android:icon="@drawable/ic_compose"
-        android:orderInCategory="2"
+        android:orderInCategory="1"
         android:title="Compose Tweet"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_user"
+        android:icon="@drawable/ic_user"
+        android:orderInCategory="2"
+        android:title="See Profile"
         app:showAsAction="always" />
 
 </menu>
