@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/view_user_profile"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true" />
+
+    <LinearLayout
+        android:padding="4dp"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/view_user_profile_background"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:src="@drawable/ic_launcher"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:paddingStart="75dp"
+                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/view_user_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Username"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/view_user_screen_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Screen Name"/>
+            </LinearLayout>
+            <ImageButton
+                android:id="@+id/view_user_followed"
+                android:layout_width="90dp"
+                android:layout_height="50dp"
+                android:layout_alignParentEnd="true"
+                android:src="@drawable/ic_add_user"
+                android:background="@drawable/tweet_bg"/>
+        </RelativeLayout>
+        <TextView
+            android:paddingTop="8dp"
+            android:id="@+id/view_user_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Some text as a user's profile description"
+            android:ems="10" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/view_user_friends_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:text="Following"/>
+            <TextView
+                android:layout_toRightOf="@id/view_user_friends_count"
+                android:layout_marginStart="4dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Following"/>
+            <TextView
+                android:id="@+id/view_user_followers_count"
+                android:layout_centerInParent="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:text="Following"/>
+            <TextView
+                android:layout_toRightOf="@id/view_user_followers_count"
+                android:layout_marginStart="4dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Followers"/>
+        </RelativeLayout>
+    </LinearLayout>
+
+</RelativeLayout>
