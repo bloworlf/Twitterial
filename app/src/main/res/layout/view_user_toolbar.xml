@@ -59,6 +59,7 @@
             android:text="Some text as a user's profile description"
             android:ems="10" />
         <RelativeLayout
+            android:paddingTop="6dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <TextView
@@ -68,6 +69,7 @@
                 android:textStyle="bold"
                 android:text="Following"/>
             <TextView
+                android:id="@+id/view_user_friends_count_text"
                 android:layout_toRightOf="@id/view_user_friends_count"
                 android:layout_marginStart="4dp"
                 android:layout_width="wrap_content"
@@ -75,12 +77,13 @@
                 android:text="Following"/>
             <TextView
                 android:id="@+id/view_user_followers_count"
-                android:layout_centerInParent="true"
+                android:layout_centerHorizontal="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
                 android:text="Following"/>
             <TextView
+                android:id="@+id/view_user_followers_count_text"
                 android:layout_toRightOf="@id/view_user_followers_count"
                 android:layout_marginStart="4dp"
                 android:layout_width="wrap_content"

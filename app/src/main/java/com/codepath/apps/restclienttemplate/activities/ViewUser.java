@@ -1,5 +1,6 @@
 package com.codepath.apps.restclienttemplate.activities;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.support.design.widget.TabLayout;
@@ -47,7 +48,7 @@ public class ViewUser extends AppCompatActivity {
     TextView view_user_name, view_user_description, view_user_followers_count, view_user_friends_count, view_user_screen_name;
     ImageButton view_user_followed;
     ImageView view_user_profile_background, view_user_profile;
-
+    private boolean isFriend;
 
 
     @Override
@@ -145,6 +146,57 @@ public class ViewUser extends AppCompatActivity {
         view_user_friends_count = findViewById(R.id.view_user_friends_count);
         view_user_friends_count.setText(TweetAdapter.withSuffix(user.friends_count));
 
+        view_user_followed.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (isFriend){
+                    destroyFriendship(user.uid);
+                }
+                else {
+                    createFriendship(user.uid);
+                }
+            }
+        });
+
+        view_user_friends_count.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //
+            }
+        });
+        view_user_followers_count.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                followersList(user);
+            }
+        });
+
+    }
+
+    private void followersList(User user) {
+        Intent intent = new Intent(this, FollowList.class);
+        intent.putExtra("user", Parcels.wrap(user));
+        startActivity(intent);
+    }
+
+    private void destroyFriendship(long uid) {
+        twitterClient.destroyFriendShip(new JsonHttpResponseHandler(){
+                                            @Override
+                                            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                                                view_user_followed.setImageResource(R.drawable.ic_add_user);
+                                            }
+                                        },
+                uid);
+    }
+
+    private void createFriendship(long uid) {
+        twitterClient.destroyFriendShip(new JsonHttpResponseHandler(){
+                                            @Override
+                                            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                                                view_user_followed.setImageResource(R.drawable.ic_user_added);
+                                            }
+                                        },
+                uid);
     }
 
     private void getFriendshipStatus(long sourdeID, long targetID) {
@@ -152,13 +204,11 @@ public class ViewUser extends AppCompatActivity {
                                               @Override
                                               public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                                                   try {
-                                                      if (response.getJSONObject("relationship").getJSONObject("source").getBoolean("following")) {
+                                                      isFriend = response.getJSONObject("relationship").getJSONObject("source").getBoolean("following");
+                                                      if (isFriend) {
                                                           view_user_followed.setImageResource(R.drawable.ic_user_added);
-                                                          //view_user_followed.setBackgroundColor(Color.CYAN);
-                                                          view_user_followed.setBackgroundColor(Color.TRANSPARENT);
                                                       } else {
                                                           view_user_followed.setImageResource(R.drawable.ic_add_user);
-                                                          view_user_followed.setBackgroundColor(Color.TRANSPARENT);
                                                       }
                                                   }
                                                   catch (JSONException e){

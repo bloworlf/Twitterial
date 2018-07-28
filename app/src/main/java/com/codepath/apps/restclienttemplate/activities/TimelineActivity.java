@@ -86,7 +86,6 @@ public class TimelineActivity extends AppCompatActivity {
                 compose.show(getSupportFragmentManager(), "ComposeFragment");
                 return true;
             case R.id.action_user:
-                //Intent intent = new Intent(this, ViewSelf.class);
                 Intent intent = new Intent(this, ViewUser.class);
                 intent.putExtra("user", Parcels.wrap(self));
                 startActivity(intent);

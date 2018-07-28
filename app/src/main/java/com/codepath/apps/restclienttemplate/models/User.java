@@ -1,8 +1,11 @@
 package com.codepath.apps.restclienttemplate.models;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.parceler.Parcel;
+
+import java.util.ArrayList;
 
 @Parcel
 public class User{
@@ -72,6 +75,19 @@ public class User{
             e.printStackTrace();
         }
         return user;
+    }
+
+    public static ArrayList<User> fromJSONArray(JSONArray array){
+        ArrayList<User> results = new ArrayList<>();
+
+        for(int i=0;i<array.length();i++){
+            try {
+                results.add(User.fromJSON(array.getJSONObject(i)));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return results;
     }
 
 }

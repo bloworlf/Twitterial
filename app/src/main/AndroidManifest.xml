@@ -36,8 +36,8 @@
         </activity>
         <activity android:name=".activities.TimelineActivity" />
         <activity android:name=".activities.TweetDetails" />
-        <activity android:name=".activities.ViewSelf" />
-        <activity android:name=".activities.ViewUser"></activity>
+        <activity android:name=".activities.ViewUser" />
+        <activity android:name=".activities.FollowList"></activity>
     </application>
 
 </manifest>
