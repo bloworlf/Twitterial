@@ -1,10 +1,12 @@
 package com.codepath.apps.restclienttemplate.models;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.parceler.Parcel;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 @Parcel
 public class Tweet{
@@ -168,6 +170,19 @@ public class Tweet{
 
 
         return  tweet;
+    }
+
+    public static ArrayList<Tweet> fromJSONArray(JSONArray array){
+        ArrayList<Tweet> results = new ArrayList<>();
+
+        for(int i=0;i<array.length();i++){
+            try {
+                results.add(Tweet.fromJSON(array.getJSONObject(i)));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return results;
     }
 
 }

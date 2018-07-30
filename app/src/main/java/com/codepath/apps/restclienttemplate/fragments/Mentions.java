@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import com.codepath.apps.restclienttemplate.R;
 import com.codepath.apps.restclienttemplate.TwitterApp;
 import com.codepath.apps.restclienttemplate.TwitterClient;
+import com.codepath.apps.restclienttemplate.activities.TimelineActivity;
 import com.codepath.apps.restclienttemplate.adapters.TweetAdapter;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -87,6 +88,7 @@ public class Mentions extends Fragment {
     }
 
     private void loadMoreMentions(long id) {
+        //TimelineActivity.progressAction.setVisible(true);
         twitterClient.loadMoreMentions(new JsonHttpResponseHandler(){
                                          @Override
                                          public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
@@ -106,16 +108,19 @@ public class Mentions extends Fragment {
                                                      e.printStackTrace();
                                                  }
                                              }
+                                             //TimelineActivity.progressAction.setVisible(false);
                                          }
                                          @Override
                                          public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
                                              Log.e("FAILURE", errorResponse.toString());
+                                             //TimelineActivity.progressAction.setVisible(false);
                                          }
                                      },
                 id);
     }
 
     private void loadMentions() {
+        //TimelineActivity.progressAction.setVisible(false);
         tweets.clear();
         tweetAdapter.notifyDataSetChanged();
         twitterClient.getMentionTimeline(new JsonHttpResponseHandler(){
@@ -134,16 +139,20 @@ public class Mentions extends Fragment {
                     }
                 }
                 swipeRefreshLayout.setRefreshing(false);
+                //TimelineActivity.progressAction.setVisible(false);
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
                 swipeRefreshLayout.setRefreshing(false);
+                //TimelineActivity.progressAction.setVisible(false);
                 Log.e("FAILURE", errorResponse.toString());
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                swipeRefreshLayout.setRefreshing(false);
+                //TimelineActivity.progressAction.setVisible(false);
                 Log.e("FAILURE", errorResponse.toString());
             }
         });

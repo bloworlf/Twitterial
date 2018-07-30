@@ -9,13 +9,13 @@
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/timeline_refresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:ignore="PrivateResource">
         <android.support.v7.widget.RecyclerView
             android:id="@+id/tweet_recyclerView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="wrap_content"/>
     </android.support.v4.widget.SwipeRefreshLayout>
 
     <!--

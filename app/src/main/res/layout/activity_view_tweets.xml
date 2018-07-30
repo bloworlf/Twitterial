@@ -5,33 +5,23 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.FollowList">
+    tools:context=".activities.ViewTweets">
 
     <android.support.design.widget.AppBarLayout
-        android:id="@+id/follow_appBarLayout"
+        android:id="@+id/tweets_appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <include
-            android:id="@+id/follow_toolbar"
+            android:id="@+id/tweets_toolbar"
             layout="@layout/toolbar"/>
     </android.support.design.widget.AppBarLayout>
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/follow_recyclerview"
+        android:id="@+id/tweets_recyclerview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:ignore="PrivateResource">
     </android.support.v7.widget.RecyclerView>
-
-    <!--
-    <ListView
-        android:id="@+id/follow_listview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        tools:ignore="PrivateResource">
-    </ListView>
-    -->
 
 </android.support.design.widget.CoordinatorLayout>

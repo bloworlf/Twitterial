@@ -48,4 +48,5 @@ dependencies {
     // Parceler library
     implementation 'org.parceler:parceler-api:1.1.11'
     annotationProcessor 'org.parceler:parceler:1.1.11'
+    implementation 'jp.wasabeef:recyclerview-animators:2.2.3'
 }

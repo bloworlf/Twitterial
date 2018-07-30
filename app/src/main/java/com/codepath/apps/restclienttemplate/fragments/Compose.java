@@ -32,6 +32,7 @@ import com.codepath.apps.restclienttemplate.models.User;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.json.JSONObject;
+import org.parceler.Parcels;
 
 import cz.msebera.android.httpclient.Header;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
@@ -40,6 +41,7 @@ import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 public class Compose extends DialogFragment {
 
     TwitterClient twitterClient;
+    Tweet tweet;
     User user;
     private ImageButton compose_cancel;
     private Button compose_tweet;
@@ -60,6 +62,13 @@ public class Compose extends DialogFragment {
 
         twitterClient = new TwitterClient(getContext());
 
+        Bundle bundle = this.getArguments();
+        if (bundle != null) {
+            //tweet = Parcels.unwrap(bundle.getParcelable("compose"));
+            //tweet = Parcels.unwrap(bundle.getParcelable("compose"));
+            tweet = (Tweet) Parcels.unwrap(bundle.getParcelable("compose"));
+        }
+
         getCurrentUser();
 
         compose_cancel = view.findViewById(R.id.compose_cancel);
@@ -70,7 +79,14 @@ public class Compose extends DialogFragment {
             }
         });
 
+        compose_char_left = view.findViewById(R.id.compose_char_left);
+
         compose_text = view.findViewById(R.id.compose_text);
+        if (tweet != null){
+            compose_text.setText("@"+tweet.user.screen_name+" ");
+            compose_text.setSelection(compose_text.getText().length());
+            compose_char_left.setText(String.valueOf(140 - compose_text.getText().toString().length()));
+        }
         compose_text.addTextChangedListener(new MyTextWatcher(compose_text));
 
         compose_screen_name = view.findViewById(R.id.compose_screen_name);
@@ -82,16 +98,24 @@ public class Compose extends DialogFragment {
         //        .load(Uri.parse(user.profile_image_url))
         //        .apply(RequestOptions.bitmapTransform(new RoundedCornersTransformation(12, 4)))
         //        .into(compose_profile);
-        compose_char_left = view.findViewById(R.id.compose_char_left);
+
         //compose_char_left.setText(String.valueOf(getCharLeft(compose_text.getText().toString().trim())));
 
         compose_tweet = view.findViewById(R.id.compose_tweet);
         compose_tweet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!TextUtils.isEmpty(compose_text.getText().toString().trim())) {
-                    sendTweet(compose_text.getText().toString().trim());
-                    dismiss();
+                if (tweet != null){
+                    if (compose_text.getText().toString().contains("@"+tweet.user.screen_name)){
+                        replyTweet(compose_text.getText().toString().trim());
+                        dismiss();
+                    }
+                }
+                else {
+                    if (!TextUtils.isEmpty(compose_text.getText().toString().trim())) {
+                        sendTweet(compose_text.getText().toString().trim());
+                        dismiss();
+                    }
                 }
             }
         });
@@ -103,6 +127,22 @@ public class Compose extends DialogFragment {
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
         return dialog;
+    }
+
+    private void replyTweet(String status) {
+        twitterClient.replyTweet(new JsonHttpResponseHandler(){
+                                     @Override
+                                     public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                                         //
+                                     }
+
+                                     @Override
+                                     public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                                         Log.e("FAILURE", errorResponse.toString());
+                                     }
+                                 },
+                status,
+                tweet.id);
     }
 
     private void sendTweet(String status) {

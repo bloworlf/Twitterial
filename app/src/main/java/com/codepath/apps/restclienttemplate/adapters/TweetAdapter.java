@@ -7,7 +7,9 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.text.util.Linkify;
@@ -32,10 +34,14 @@ import com.codepath.apps.restclienttemplate.TwitterApp;
 import com.codepath.apps.restclienttemplate.TwitterClient;
 import com.codepath.apps.restclienttemplate.activities.TimelineActivity;
 import com.codepath.apps.restclienttemplate.activities.TweetDetails;
+import com.codepath.apps.restclienttemplate.activities.ViewTweets;
 import com.codepath.apps.restclienttemplate.activities.ViewUser;
+import com.codepath.apps.restclienttemplate.fragments.Compose;
 import com.codepath.apps.restclienttemplate.fragments.Timeline;
 import com.codepath.apps.restclienttemplate.models.Media;
 import com.codepath.apps.restclienttemplate.models.Tweet;
+import com.codepath.apps.restclienttemplate.models.User;
+import com.codepath.apps.restclienttemplate.others.PatternEditableBuilder;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.json.JSONArray;
@@ -48,6 +54,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 import cz.msebera.android.httpclient.Header;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
@@ -108,6 +115,24 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder>{
         viewHolder.user_screen_name.setText("@"+tweet.user.screen_name);
         viewHolder.tweet_created_at.setText(getRelativeTimeAgo(tweet.created_at));
         viewHolder.tweet_text.setText(tweet.text);
+        new PatternEditableBuilder()
+                .addPattern(Pattern.compile("\\@(\\w+)"), Color.BLUE,
+                        new PatternEditableBuilder.SpannableClickedListener() {
+                            @Override
+                            public void onSpanClicked(String text) {
+                                showUser(text.substring(1));
+                            }
+                        })
+                .into(viewHolder.tweet_text);
+        new PatternEditableBuilder()
+                .addPattern(Pattern.compile("\\#(\\w+)"), Color.BLUE,
+                        new PatternEditableBuilder.SpannableClickedListener() {
+                            @Override
+                            public void onSpanClicked(String text) {
+                                searchTweets(text.substring(1));
+                            }
+                        })
+                .into(viewHolder.tweet_text);
         if (tweet.favorited){
             viewHolder.tweet_favorited.setImageResource(R.drawable.ic_like_fill);
         }
@@ -237,7 +262,60 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder>{
                 context.startActivity(intent);
             }
         });
+        viewHolder.tweet_reply.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Intent intent = new Intent(context, Compose.class);
+                //intent.putExtra("compose", Parcels.wrap(tweet));
+                Compose compose = Compose.newInstance();
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("compose", Parcels.wrap(tweet));
+                compose.setArguments(bundle);
+                compose.show(((FragmentActivity)context).getSupportFragmentManager(), "ComposeFragment");
+                //context.startActivity(intent);
+            }
+        });
 
+    }
+
+    private void searchTweets(final String query) {
+        twitterClient.searchTweets(new JsonHttpResponseHandler(){
+                                       @Override
+                                       public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                                           JSONArray tweetArray;
+
+                                           try {
+                                               tweetArray = response.getJSONArray("statuses");
+                                               tweets.addAll(Tweet.fromJSONArray(tweetArray));
+
+                                               Intent intent = new Intent(context, ViewTweets.class);
+                                               intent.putExtra("tweets", Parcels.wrap(tweets));
+                                               intent.putExtra("query", query);
+                                               context.startActivity(intent);
+                                           }
+                                           catch (JSONException e){
+                                               e.printStackTrace();
+                                           }
+                                       }
+
+                                       @Override
+                                       public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                                           Log.d("FAILURE", errorResponse.toString());
+                                       }
+                                   },
+                query);
+    }
+
+    private void showUser(String screen_name) {
+        twitterClient.showUser(new JsonHttpResponseHandler(){
+                                   @Override
+                                   public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                                       Intent intent = new Intent(context, ViewUser.class);
+                                       intent.putExtra("user", Parcels.wrap(User.fromJSON(response)));
+                                       context.startActivity(intent);
+                                   }
+                               },
+                screen_name);
     }
 
     private void updateTweetView(long id, final int position) {
@@ -360,7 +438,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder>{
         public VideoView tweet_video;
         public TextView user_name, user_screen_name, tweet_text, tweet_created_at;
         public TextView tweet_favorite_count, tweet_comment_count, tweet_retweet_count;
-        public ImageButton tweet_favorited, tweet_retweeted, tweet_play_video;
+        public ImageButton tweet_favorited, tweet_retweeted, tweet_play_video, tweet_reply;
         public LinearLayout tweet_linearLayout;
         //public RelativeLayout relativeLayout;
 
@@ -379,6 +457,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder>{
             tweet_comment_count = view.findViewById(R.id.tweet_comment_count);
             tweet_retweeted = view.findViewById(R.id.tweet_retweeted);
             tweet_retweet_count = view.findViewById(R.id.tweet_retweet_count);
+            tweet_reply = view.findViewById(R.id.tweet_reply);
 
             tweet_image = view.findViewById(R.id.tweet_image);
             tweet_video = view.findViewById(R.id.tweet_video);

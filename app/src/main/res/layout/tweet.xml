@@ -133,6 +133,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
             <ImageButton
+                android:id="@+id/tweet_reply"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
                 android:background="#00ffffff"

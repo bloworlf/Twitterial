@@ -153,9 +153,10 @@ public class UserTweet extends Fragment {
 
                                         @Override
                                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                                            Log.d("USERTWEET", errorResponse.toString());
+                                            //Log.d("USERTWEET", errorResponse.toString());
                                             swipeRefreshLayout.setRefreshing(false);
                                         }
+
                                     },
                 uid);
 

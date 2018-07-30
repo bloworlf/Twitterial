@@ -65,9 +65,6 @@ public class ViewUser extends AppCompatActivity {
 
         getCurrentUser();
 
-        //bundle = new Bundle();
-        //bundle.putParcelable("user", Parcels.wrap(user));
-
         userTweet = new UserTweet();
         userTweet.setArguments(bundle);
 
@@ -161,7 +158,7 @@ public class ViewUser extends AppCompatActivity {
         view_user_friends_count.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //
+                friendsList(user);
             }
         });
         view_user_followers_count.setOnClickListener(new View.OnClickListener() {
@@ -173,9 +170,15 @@ public class ViewUser extends AppCompatActivity {
 
     }
 
+    private void friendsList(User user) {
+        Intent intent = new Intent(this, FollowList.class);
+        intent.putExtra("userFriends", Parcels.wrap(user));
+        startActivity(intent);
+    }
+
     private void followersList(User user) {
         Intent intent = new Intent(this, FollowList.class);
-        intent.putExtra("user", Parcels.wrap(user));
+        intent.putExtra("userFollowers", Parcels.wrap(user));
         startActivity(intent);
     }
 
@@ -190,7 +193,7 @@ public class ViewUser extends AppCompatActivity {
     }
 
     private void createFriendship(long uid) {
-        twitterClient.destroyFriendShip(new JsonHttpResponseHandler(){
+        twitterClient.createFriendShip(new JsonHttpResponseHandler(){
                                             @Override
                                             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                                                 view_user_followed.setImageResource(R.drawable.ic_user_added);

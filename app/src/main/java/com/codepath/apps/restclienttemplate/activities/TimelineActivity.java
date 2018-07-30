@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
 
 import com.codepath.apps.restclienttemplate.R;
 import com.codepath.apps.restclienttemplate.TwitterApp;
@@ -38,6 +40,7 @@ public class TimelineActivity extends AppCompatActivity {
     User self = new User();
 
     private MenuItem composeAction, userAction;
+    public static MenuItem progressAction;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +70,13 @@ public class TimelineActivity extends AppCompatActivity {
         tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.colorAccent));
         tabLayout.setupWithViewPager(viewPager);
 
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        progressAction = menu.findItem(R.id.action_progress);
+        //ProgressBar progressBar = (ProgressBar) MenuItemCompat.getActionView(progressAction);
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override

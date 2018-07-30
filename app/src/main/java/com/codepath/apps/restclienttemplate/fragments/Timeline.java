@@ -12,10 +12,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.codepath.apps.restclienttemplate.R;
 import com.codepath.apps.restclienttemplate.TwitterApp;
 import com.codepath.apps.restclienttemplate.TwitterClient;
+import com.codepath.apps.restclienttemplate.activities.TimelineActivity;
 import com.codepath.apps.restclienttemplate.adapters.TweetAdapter;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -41,6 +43,12 @@ public class Timeline extends Fragment{
 
     public Timeline(){
         //Requires an empty constructor
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
     }
 
     @Nullable
@@ -125,6 +133,7 @@ public class Timeline extends Fragment{
     }
 
     private void loadMore(long id) {
+        //TimelineActivity.progressAction.setVisible(true);
         twitterClient.loadMoreTweets(new JsonHttpResponseHandler(){
                                          @Override
                                          public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
@@ -144,10 +153,12 @@ public class Timeline extends Fragment{
                                                      e.printStackTrace();
                                                  }
                                              }
+                                             //TimelineActivity.progressAction.setVisible(false);
                                          }
                                          @Override
                                          public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
                                              Log.e("FAILURE", errorResponse.toString());
+                                             //TimelineActivity.progressAction.setVisible(false);
                                          }
                                      },
                 id);
@@ -155,12 +166,12 @@ public class Timeline extends Fragment{
     }
 
     private void loadTimeline(){
+        //TimelineActivity.progressAction.setVisible(true);
         tweets.clear();
         tweetAdapter.notifyDataSetChanged();
         twitterClient.getHomeTimeline(new JsonHttpResponseHandler(){
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                //super.onSuccess(statusCode, headers, response);
 
                 for (int i=0;i<response.length();i++){
                     try {
@@ -173,11 +184,13 @@ public class Timeline extends Fragment{
                     }
                 }
                 swipeRefreshLayout.setRefreshing(false);
+                //TimelineActivity.progressAction.setVisible(false);
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
                 swipeRefreshLayout.setRefreshing(false);
+                //TimelineActivity.progressAction.setVisible(false);
                 Log.e("FAILURE", errorResponse.toString());
             }
 

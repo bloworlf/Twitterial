@@ -81,7 +81,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
-                android:text="Following"/>
+                android:text="Followers"/>
             <TextView
                 android:id="@+id/view_user_followers_count_text"
                 android:layout_toRightOf="@id/view_user_followers_count"

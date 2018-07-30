@@ -79,6 +79,14 @@ public class TwitterClient extends OAuthBaseClient {
 		client.post(apiUrl, params, handler);
 	}
 
+	public void replyTweet(AsyncHttpResponseHandler handler, String status, long id){
+		String apiUrl = getApiUrl("statuses/update.json");
+		RequestParams params = new RequestParams();
+		params.put("status", status);
+		params.put("in_reply_to_status_id", id);
+		client.post(apiUrl, params, handler);
+	}
+
 	public void deleteTweet(AsyncHttpResponseHandler handler, long id){
 		String apiUrl = getApiUrl("statuses/destroy/"+id+".json");
 		client.post(apiUrl, handler);
@@ -211,6 +219,41 @@ public class TwitterClient extends OAuthBaseClient {
 		params.put("cursor", cursor);
 		client.get(apiUrl, params, handler);
 	}
+
+	public void viewFriends(AsyncHttpResponseHandler handler, long uid){
+		String apiUrl = getApiUrl("friends/list.json");
+		RequestParams params = new RequestParams();
+		params.put("user_id", uid);
+		client.get(apiUrl, params, handler);
+	}
+
+	public void viewMoreFriends(AsyncHttpResponseHandler handler, long uid, long cursor){
+		String apiUrl = getApiUrl("friends/list.json");
+		RequestParams params = new RequestParams();
+		params.put("user_id", uid);
+		params.put("cursor", cursor);
+		client.get(apiUrl, params, handler);
+	}
+	public void showUser(AsyncHttpResponseHandler handler, String screen_name){
+		String apiUrl = getApiUrl("users/show.json");
+		RequestParams params = new RequestParams();
+		params.put("screen_name", screen_name);
+		client.get(apiUrl, params, handler);
+	}
+	public void searchTweets(AsyncHttpResponseHandler handler, String query){
+		String apiUrl = getApiUrl("search/tweets.json");
+		RequestParams params = new RequestParams();
+		params.put("q", query);
+		client.get(apiUrl, params, handler);
+	}
+	public void searchMoreTweets(AsyncHttpResponseHandler handler, String query, long id){
+		String apiUrl = getApiUrl("search/tweets.json");
+		RequestParams params = new RequestParams();
+		params.put("q", query);
+		params.put("max_id", id - 1);
+		client.get(apiUrl, params, handler);
+	}
+
 
 
 	/* 1. Define the endpoint URL with getApiUrl and pass a relative path to the endpoint

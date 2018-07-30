@@ -204,7 +204,7 @@ public class Media {
     public String expanded_url;
     public int width;
     public int height;
-    public  long id;
+    public long id;
     public String url;
 
     public Media(){
